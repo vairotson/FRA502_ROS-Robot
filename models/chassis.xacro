@@ -1,0 +1,174 @@
+<?xml version="1.0"?>
+<robot name = "rotson_base" xmlns:xacro = "http://www.ros.org/wiki/xacro">
+    <!-- นำค่าในตัวแปรจากไฟล์ property มาใช้ -->
+    <xacro:include filename="$(find dd_sim)/models/properties.xacro"/>
+
+    <!-- สร้าง footprint ว่างเปล่าสำหรับเริ่มต้นสร้าง link ถัดไป -->
+    <xacro:macro name = "chassis" params ="">
+        <link name = "base_footprint"/>
+        <joint name = "base_footprint_to_base_link" type = "fixed">
+            <parent link="base_footprint"/>
+            <child link="base_link"/>
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.05"/>
+        </joint>    
+<!-- ******************** -->
+<!-- All inertial parameter for all body nor body from gazebo plug-in are get from solidwork mass properties -->
+<!-- ******************** -->
+
+    <!-- Create Robot Main Baselink -->
+        <link name="base_link">
+            <inertial>
+                <origin xyz="${chassis_com}" rpy="0.0 0.0 0.0"/>
+                <mass value="${chassis_mass}"/>
+                <inertia ixx="${chassis_Ixx}" ixy="${chassis_Ixy}" 
+                ixz="${chassis_Ixz}" iyy="${chassis_Iyy}" 
+                iyz="${chassis_Iyz}" izz="${chassis_Izz}"/>
+            </inertial>
+            
+            <visual>
+                <origin rpy="0.0 0.0 0.0" xyz="-0.06 0.0 0.0"/>
+                <geometry>
+                    <box size="0.25 ${wheel_seperation} 0.03"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin rpy="0.0 0.0 0.0" xyz="-0.06 0.0 0.0"/>
+                <geometry>
+                    <box size="0.25 ${wheel_seperation} 0.03"/>
+                </geometry>
+            </collision>
+        </link>
+<!-- Build Caster wheel and attach to joint on base link -->
+        <joint name="base_link_to_caster" type="fixed">
+            <parent link="base_link"/>
+            <child link="caster"/>
+            <origin rpy="0.0 0.0 0.0" xyz="-0.15 0.0 -0.03"/>
+        </joint>
+
+        <link name="caster">
+            <inertial>
+                <origin xyz="${caster_com}" rpy="0.0 0.0 0.0"/>
+                <mass value="${caster_mass}"/>
+                <inertia ixx="${caster_Ixx}" ixy="${caster_Ixy}" 
+                ixz="${caster_Ixz}" iyy="${caster_Iyy}" 
+                iyz="${caster_Iyz}" izz="${caster_Izz}"/>
+            </inertial>
+            <!-- Define Co-ef Friction for caster wheel,refer to PP plastic and concrete in dry state -->
+            <surface>
+                <friction>
+                <ode>
+                    <mu>0.05</mu>
+                    <mu2>0.05</mu2>
+                </ode>
+                </friction>
+            </surface>           
+            <visual>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                    <geometry>
+                        <sphere radius="0.02"/>
+                    </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                    <geometry>
+                        <sphere radius="0.02"/>
+                    </geometry>
+            </collision>
+        </link>
+<!-- Build Camera -->
+        <joint name="camera_joint" type="fixed">
+            <axis xyz="0 1 0" />
+            <origin xyz="${camera_link} 0 ${camera_high}" 
+            rpy="0 0 0"/>
+            <parent link="base_link"/>
+            <child link="camera_link"/>
+        </joint>
+
+        
+        <link name="camera_link">
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="${camera_size}"/>
+                </geometry>
+            </collision>
+
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="${camera_size}"/>
+                </geometry>
+                <!-- <material name="green"/> -->
+            </visual>
+
+            <inertial>
+                <mass value="1e-5" />
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <inertia ixx="1e-6" ixy="0" ixz="0" 
+                iyy="1e-6" iyz="0" izz="1e-6" />
+            </inertial>
+        </link>
+
+        <!-- Build base for lidar เพื่อไม่ให้ล้อบัง -->
+        <joint name="base_link_to_lidar_base" type="fixed">
+            <origin xyz="-0.06 0.0 0.035" rpy="0.0 0.0 0.0"/>
+            <parent link="base_link"/>
+            <child link="lidar_base"/>
+            <axis xyz="0.0 0.0 0.0"/>
+            <!-- <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/> -->
+        </joint>
+        <link name="lidar_base">
+            <inertial>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <mass value="0.408"/>
+                <inertia ixx="0.00039440" ixy="0.0" ixz="0.0" 
+                iyy="0.00039440" iyz="0.0" izz="0.00068"/>
+            </inertial>
+            <visual name="">
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <geometry>
+                    <box size="0.1 0.1 0.04"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <geometry>
+                    <box size="0.1 0.1 0.04"/>
+                </geometry>
+            </collision>
+        </link>
+
+    <!-- Build Lidar -->
+        <joint name="hokuyo_joint" type="fixed">
+            <axis xyz="0 1 0" />
+            <origin xyz="0 0 0.05" rpy="0 0 0"/>
+            <parent link="lidar_base"/>
+            <child link="hokuyo_link"/>
+        </joint>
+
+        <!-- Hokuyo Laser -->
+        <link name="hokuyo_link">
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <cylinder radius="0.05" length="0.1"/>
+                </geometry> 
+            </collision>
+
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <cylinder radius="0.05" length="0.1"/>
+                    <!-- <mesh filename="package://rrbot_description/meshes/hokuyo.dae"/> -->
+                </geometry>
+            </visual>
+
+            <inertial>
+                <mass value="1e-5" />
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+            </inertial>
+        </link>
+
+    </xacro:macro>
+</robot>

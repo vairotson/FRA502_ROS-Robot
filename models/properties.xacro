@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro = "http://www.ros.org/wiki/xacro">
+
+    <xacro:property name="pi" value= "3.14"/>
+    
+    <!-- Differential Drive Parameter -->
+    <xacro:property name="update_rate" value= "5"/>
+
+    <!--Wheel-->
+    <xacro:property name="wheel_radius" value= "0.05"/>
+    <xacro:property name="wheel_length" value= "0.02"/>
+    <xacro:property name="wheel_seperation" value= "0.2"/>
+    <xacro:property name="u_max" value= "10.0"/>
+    <xacro:property name="v_max" value= "20.0"/>
+    <xacro:property name="wheel_joint_damp" value= "0.3"/>
+    <!--Wheel Inertia Parameter-->
+    <xacro:property name="wheel_com" value= "0 -0.01 0"/>
+    <xacro:property name="wheel_mass" value= "0.23"/>
+    <xacro:property name="wheel_Ixx" value= "0.00015201"/>
+    <xacro:property name="wheel_Ixy" value= "0.0"/>
+    <xacro:property name="wheel_Ixz" value= "0.0"/>
+    <xacro:property name="wheel_Iyy" value= "0.00028863"/>
+    <xacro:property name="wheel_Iyz" value= "0.0"/>
+    <xacro:property name="wheel_Izz" value= "0.00015201"/>
+
+    <!--Caster Inertia Parameter-->
+    <xacro:property name="caster_com" value= "0.0 0.0 0.0"/>
+    <xacro:property name="caster_mass" value= "0.2446"/>
+    <xacro:property name="caster_Ixx" value= "0.00003914"/>
+    <xacro:property name="caster_Ixy" value= "0.0"/>
+    <xacro:property name="caster_Ixz" value= "0.0"/>
+    <xacro:property name="caster_Iyy" value= "0.00003914"/>
+    <xacro:property name="caster_Iyz" value= "0.0"/>
+    <xacro:property name="caster_Izz" value= "0.00003914"/>
+
+    <!--Chassis Inertia Parameter-->
+    <xacro:property name="chassis_com" value= "-0.06 0.0 0"/>
+    <xacro:property name="chassis_mass" value= "1.53"/>
+    <xacro:property name="chassis_Ixx" value= "0.00521475"/>
+    <xacro:property name="chassis_Ixy" value= "0.0"/>
+    <xacro:property name="chassis_Ixz" value= "0.0"/>
+    <xacro:property name="chassis_Iyy" value= "0.00808350"/>
+    <xacro:property name="chassis_Iyz" value= "0.0"/>
+    <xacro:property name="chassis_Izz" value= "0.01306875"/>
+    
+    <!--Camera Property-->
+    <xacro:property name="camera_link" value= "0.065"/>
+    <xacro:property name="camera_high" value= "0.0"/>
+    <xacro:property name="camera_size" value= "0.005 0.07 0.02"/>
+
+    <!--lidar Property-->
+    <!-- <xacro:property name="camera_link" value= "0.05"/>
+    <xacro:property name="hokuyo_high" value= "0.05"/> -->
+</robot>

@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<launch> 
+    <!--node pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" name="joint_state_publisher_gui" output="screen"/-->
+    <!--param name= "use_gui" value="TRUE"/-->
+
+    <param name = "robot_description" command = "$(find xacro)/xacro $(find dd_sim)/models/dd.urdf.xacro"/>
+    <node name = "robot_state_publisher" pkg = "robot_state_publisher" type = "robot_state_publisher"/>
+    <node name = "joint_state_publisher" pkg = "joint_state_publisher" type = "joint_state_publisher"/>
+    <node name = "rviz" pkg = "rviz" type="rviz" args="-d $(find dd_sim)/rviz/display.rviz"/>
+    <!-- Call for Gazebo from empty_world and put my friend world to show-->
+    <include file = "$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name = "world_name" value = "$(find dd_sim)/worlds/dd_502_room.world"/>
+    </include>
+
+    <!-- Call For Spawner to read URDF file to spawn my robot on gazebo -->
+    <node 
+    name = "urdf_spawner" 
+    pkg="gazebo_ros" type="spawn_model" 
+    respawn="false" output="screen" 
+    args="-urdf -model rotson_robot -param robot_description"/>
+    
+    <!-- Call for tele keyboard control (plug-in) -->
+    <node 
+    name = "teleop_twist_keyboard" 
+    pkg="teleop_twist_keyboard" 
+    type = "teleop_twist_keyboard.py"/>
+
+</launch>
+

@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<robot name = "rotson_wheel" xmlns:xacro = "http://www.ros.org/wiki/xacro">
+
+    <xacro:include filename="$(find dd_sim)/models/properties.xacro"/>
+
+    <xacro:macro name = "wheel" params ="name translation rotation parent">
+
+        <link name = "${name}_wheel">
+            <inertial>
+                <origin xyz="${wheel_com}" rpy="0.0 0.0 0.0"/>
+                <mass value="${wheel_mass}"/>
+                <inertia ixx="${wheel_Ixx}" ixy="${wheel_Ixy}" 
+                ixz="${wheel_Ixz}" iyy="${wheel_Iyy}" 
+                iyz="${wheel_Iyz}" izz="${wheel_Izz}"/>
+            </inertial>  
+            <visual>   
+                <origin rpy="${pi/2} 0.0 0.0"/>
+                <geometry>
+                    <cylinder radius="${wheel_radius}" length="${wheel_length}"/>
+                </geometry>
+            </visual>
+            <collision>   
+                <origin rpy="${pi/2} 0.0 0.0"/>
+                <geometry>
+                    <cylinder radius="${wheel_radius}" length="${wheel_length}"/>
+                </geometry>
+            </collision>
+        </link>
+        <joint name = "base_link_to_${name}_wheel" type = "continuous">
+            <parent link="${parent}"/>
+            <child link="${name}_wheel"/>
+            <origin rpy="${rotation}" xyz="${translation}"/>
+            <axis xyz="0 1 0"/>
+            <limit effort="${u_max}" velocity="${v_max}"/>
+            <dynamics damping="${wheel_joint_damp}"/>
+        </joint>    
+        
+    </xacro:macro>
+</robot>
